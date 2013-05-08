@@ -1,16 +1,16 @@
-﻿using System;
-using System.ComponentModel;
-using System.Windows;
-using System.Xml;
-using Catel.LogAnalyzer.ViewModels;
-using Catel.MVVM;
-using Catel.Windows.Controls.MVVMProviders.Logic;
-using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.AvalonEdit.Highlighting.Xshd;
-
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ShellView.xaml.cs" company="Catel development team">
+//   Copyright (c) 2008 - 2013 Catel development team. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 namespace Catel.LogAnalyzer.Views
 {
-    using Windows;
+    using System.Xml;
+
+    using Catel.Windows;
+
+    using ICSharpCode.AvalonEdit.Highlighting;
+    using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml.
@@ -24,13 +24,13 @@ namespace Catel.LogAnalyzer.Views
         public ShellView()
             : base(DataWindowMode.Custom)
         {
-            //IHighlightingDefinition highlightingDefinition;
-            //using (var reader = new XmlTextReader("HighlightingDefinition.xshd")) 
-            //{
-            //    highlightingDefinition = HighlightingLoader.Load(reader, HighlightingManager.Instance);
-            //}
+            IHighlightingDefinition highlightingDefinition;
+            using (var reader = new XmlTextReader("HighlightingDefinition.xshd"))
+            {
+                highlightingDefinition = HighlightingLoader.Load(reader, HighlightingManager.Instance);
+            }
 
-            //HighlightingManager.Instance.RegisterHighlighting("CatelHighlighting", new[] { ".cool" }, highlightingDefinition);
+            HighlightingManager.Instance.RegisterHighlighting("CatelHighlighting", new[] { ".cool" }, highlightingDefinition);
 
             InitializeComponent();
         }

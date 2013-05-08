@@ -154,7 +154,9 @@
     <None Include="Fody.targets">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Resources\HighlightingDefinition.xshd" />
+    <Content Include="Resources\HighlightingDefinition.xshd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

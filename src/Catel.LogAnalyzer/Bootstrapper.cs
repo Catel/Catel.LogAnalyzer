@@ -1,22 +1,26 @@
-﻿using Catel.IoC;
-using Catel.LogAnalyzer.Views;
-using Catel.Logging;
-using Catel.MVVM;
-using Catel.MVVM.ViewModels;
-using Catel.Windows;
-using Catel.Windows.Controls;
-
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Bootstrapper.cs" company="Catel development team">
+//   Copyright (c) 2008 - 2013 Catel development team. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 namespace Catel.LogAnalyzer
 {
+    using Catel.IoC;
+    using Catel.LogAnalyzer.Views;
+    using Catel.Logging;
+    using Catel.MVVM;
+    using Catel.MVVM.ViewModels;
+    using Catel.Windows;
+    using Catel.Windows.Controls;
+
     /// <summary>
-    ///     The bootstrapper.
+    /// The bootstrapper.
     /// </summary>
     public class Bootstrapper : BootstrapperBase<ShellView>
     {
         #region Constructors
-
         /// <summary>
-        ///     Initializes a new instance of the <see cref="Bootstrapper" /> class.
+        /// Initializes a new instance of the <see cref="Bootstrapper"/> class.
         /// </summary>
         public Bootstrapper()
         {
@@ -34,22 +38,12 @@ namespace Catel.LogAnalyzer
 
             var viewModelLocator = ServiceLocator.Default.ResolveType<IViewModelLocator>();
             viewModelLocator.Register(typeof(SplashScreenView), typeof(ProgressNotifyableViewModel));
-
         }
-
         #endregion
 
         #region Method Overrides
-
-        protected override void ConfigureModuleCatalog()
-        {
-            base.ConfigureModuleCatalog();
-
-            ModuleCatalog.Initialize();
-        }
-
         /// <summary>
-        ///     Configures the IoC container.
+        /// Configures the IoC container.
         /// </summary>
         protected override void ConfigureContainer()
         {
@@ -57,7 +51,6 @@ namespace Catel.LogAnalyzer
 
             Container.RegisterType<ILogAnalyzerService, LogAnalyzerService>();
         }
-
         #endregion
     }
 }
