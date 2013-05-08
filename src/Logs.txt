@@ -1,0 +1,5 @@
+08:09:50:267 => DEBUG Catel.Windows.Controls.MVVMProviders.Logic.UserControlLogic Skipping the search for an instance of the InfoBarMessageControl
+08:09:50:282 => ERROR Catel.MVVM.Views.ViewToViewModelMappingHelper Initializing view model container to manage ViewToViewModel mappings
+08:09:50:282 => DEBUG Catel.MVVM.Views.ViewToViewModelMappingHelper Initializing view model 'PersonViewModel'
+08:09:50:282 => INFO Catel.MVVM.Views.ViewToViewModelMappingHelper Initialized view model 'PersonViewModel'
+08:09:50:282 => WARNING Catel.MVVM.Views.ViewToViewModelMappingHelper Initialized view model container to manage ViewToViewModel mappings

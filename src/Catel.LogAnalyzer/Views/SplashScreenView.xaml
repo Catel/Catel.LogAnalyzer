@@ -1,0 +1,50 @@
+﻿<catel:DataWindow x:Class="Catel.LogAnalyzer.Views.SplashScreenView"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:catel="http://catel.codeplex.com"
+                  ShowInTaskbar="False"
+                  Topmost="True"
+                  WindowStartupLocation="CenterScreen"
+                  WindowStyle="None"
+                  Width="460" Height="275">
+
+    <!--  Resources  -->
+    <catel:DataWindow.Resources />
+
+    <!--  Content  -->
+    <Border BorderThickness="1" BorderBrush="Black">
+        <Grid >
+            <TextBlock Width="314"
+                   Height="42"
+                   Margin="124,54,12,0"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Top"
+                   FontSize="26"
+                   Text="Catel Log Analyzer"
+                   TextAlignment="Center"
+                   TextWrapping="Wrap" />
+            <Image Width="100"
+               Height="100"
+               Margin="24,21,326,0"
+               VerticalAlignment="Top"
+               Source="/Resources\Images\logo.png" />
+
+            <ProgressBar Width="428"
+                           Height="15"
+                           Margin="10,203,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Value="{Binding Percentage}" />
+            <TextBlock Height="23"
+                         Margin="10,185,24,0"
+                         VerticalAlignment="Top"
+                         Text="{Binding TaskName}" />
+            <TextBlock Height="23"
+                         Margin="10,242,26,0"
+                         VerticalAlignment="Top"
+                         FontSize="10"
+                         Opacity="1"
+                         Text="Copyright (c) 2008 - 2013 Catel development team. All rights reserved." />
+        </Grid>
+    </Border>
+</catel:DataWindow>

@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{96A6F988-C48D-4297-B9A7-E12EB362725B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A8F1B42A-30FD-407F-8DDC-AAEEFFD06482}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pepita", "pepita", "{3EE59070-10BA-4F01-9789-BB8A1D7E2069}"
+	ProjectSection(SolutionItems) = preProject
+		..\tools\pepita\PepitaGet.dll = ..\tools\pepita\PepitaGet.dll
+		..\tools\pepita\PepitaGet.pdb = ..\tools\pepita\PepitaGet.pdb
+		..\tools\pepita\PepitaGet.targets = ..\tools\pepita\PepitaGet.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{CD78E8D6-8D3F-44FF-99CD-E8F9F045E720}"
+	ProjectSection(SolutionItems) = preProject
+		Catel.LogAnalyzer.sln.DotSettings = Catel.LogAnalyzer.sln.DotSettings
+		nuget.config = nuget.config
+		Settings.StyleCop = Settings.StyleCop
+		SolutionAssemblyInfo.cs = SolutionAssemblyInfo.cs
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catel.LogAnalyzer", "Catel.LogAnalyzer\Catel.LogAnalyzer.csproj", "{2B49EB22-0243-49E2-AA57-97B0160AF9F3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2B49EB22-0243-49E2-AA57-97B0160AF9F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B49EB22-0243-49E2-AA57-97B0160AF9F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B49EB22-0243-49E2-AA57-97B0160AF9F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B49EB22-0243-49E2-AA57-97B0160AF9F3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3EE59070-10BA-4F01-9789-BB8A1D7E2069} = {96A6F988-C48D-4297-B9A7-E12EB362725B}
+		{2B49EB22-0243-49E2-AA57-97B0160AF9F3} = {A8F1B42A-30FD-407F-8DDC-AAEEFFD06482}
+	EndGlobalSection
+EndGlobal
