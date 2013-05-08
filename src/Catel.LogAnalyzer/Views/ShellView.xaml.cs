@@ -22,10 +22,10 @@ namespace Catel.LogAnalyzer.Views
         /// Initializes a new instance of the <see cref="ShellView"/> class.
         /// </summary>
         public ShellView()
-            : base(DataWindowMode.Custom)
+            : base(DataWindowMode.Custom, setOwnerAndFocus: false)
         {
             IHighlightingDefinition highlightingDefinition;
-            using (var reader = new XmlTextReader("HighlightingDefinition.xshd"))
+            using (var reader = new XmlTextReader("Resources\\HighlightingDefinition.xshd"))
             {
                 highlightingDefinition = HighlightingLoader.Load(reader, HighlightingManager.Instance);
             }

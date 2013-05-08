@@ -13,10 +13,16 @@ namespace Catel.LogAnalyzer
     public partial class App
     {
         #region Constructors
-        public App()
+        /// <summary>
+        /// Raises the <see cref="E:System.Windows.Application.Startup" /> event.
+        /// </summary>
+        /// <param name="e">A <see cref="T:System.Windows.StartupEventArgs" /> that contains the event data.</param>
+        protected override void OnStartup(System.Windows.StartupEventArgs e)
         {
             var bootstrapper = new Bootstrapper();
             bootstrapper.RunWithSplashScreen<ProgressNotifyableViewModel>();
+
+            base.OnStartup(e);
         }
         #endregion
     }

@@ -1,19 +1,18 @@
-﻿<catel:DataWindow x:Class="Catel.LogAnalyzer.Views.SplashScreenView"
+﻿<Window x:Class="Catel.LogAnalyzer.Views.SplashScreen"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:catel="http://catel.codeplex.com"
-                  ShowInTaskbar="False"
-                  Topmost="True"
-                  WindowStartupLocation="CenterScreen"
-                  WindowStyle="None"
-                  Width="460" Height="275">
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:viewModels="clr-namespace:Catel.MVVM.ViewModels;assembly=Catel.MVVM"
+        WindowStartupLocation="CenterScreen" WindowStyle="None" Topmost="true" SizeToContent="WidthAndHeight" Background="{x:Null}" ResizeMode="NoResize" AllowsTransparency="True">
 
-    <!--  Resources  -->
-    <catel:DataWindow.Resources />
+    <i:Interaction.Behaviors>
+        <catel:WindowBehavior ViewModelType="{x:Type viewModels:ProgressNotifyableViewModel}" />
+    </i:Interaction.Behaviors>
 
     <!--  Content  -->
-    <Border BorderThickness="1" BorderBrush="Black">
-        <Grid >
+    <Border BorderThickness="1" BorderBrush="Black" Background="White">
+        <Grid Width="460" Height="275">
             <TextBlock Width="314"
                    Height="42"
                    Margin="124,54,12,0"
@@ -27,7 +26,7 @@
                Height="100"
                Margin="24,21,326,0"
                VerticalAlignment="Top"
-               Source="/Resources\Images\logo.png" />
+               Source="/Resources/Images/logo.png" />
 
             <ProgressBar Width="428"
                            Height="15"
@@ -47,4 +46,4 @@
                          Text="Copyright (c) 2008 - 2013 Catel development team. All rights reserved." />
         </Grid>
     </Border>
-</catel:DataWindow>
+</Window>

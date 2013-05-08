@@ -28,16 +28,14 @@ namespace Catel.LogAnalyzer
             LogManager.RegisterDebugListener();
 #endif
 
-            UserControl.DefaultCreateWarningAndErrorValidatorForViewModelValue = false;
-            UserControl.DefaultSkipSearchingForInfoBarMessageControlValue = true;
+            var serviceLocator = ServiceLocator.Default;
+            Environment.RegisterDefaultViewModelServices();
 
-            StyleHelper.CreateStyleForwardersForDefaultStyles();
+            var viewLocator = serviceLocator.ResolveType<IViewLocator>();
+            viewLocator.Register(typeof(ProgressNotifyableViewModel), typeof(SplashScreen));
 
-            var viewLocator = ServiceLocator.Default.ResolveType<IViewLocator>();
-            viewLocator.Register(typeof(ProgressNotifyableViewModel), typeof(SplashScreenView));
-
-            var viewModelLocator = ServiceLocator.Default.ResolveType<IViewModelLocator>();
-            viewModelLocator.Register(typeof(SplashScreenView), typeof(ProgressNotifyableViewModel));
+            var viewModelLocator = serviceLocator.ResolveType<IViewModelLocator>();
+            viewModelLocator.Register(typeof(SplashScreen), typeof(ProgressNotifyableViewModel));
         }
         #endregion
 
