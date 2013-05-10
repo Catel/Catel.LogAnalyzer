@@ -29,21 +29,28 @@ namespace Catel.LogAnalyzer
 
             while ((line = stringReader.ReadLine()) != null)
             {
-                var timeString = line.Substring(0, 12);
+                try
+                {
+                    var timeString = line.Substring(0, 12);
 
-                var logEventType = line.Contains("DEBUG") ? "DEBUG" : line.Contains("INFO") ? "INFO" : line.Contains("ERROR") ? "ERROR" : line.Contains("WARNING") ? "WARNING" : string.Empty;
+                    var logEventType = line.Contains("DEBUG") ? "DEBUG" : line.Contains("INFO") ? "INFO" : line.Contains("ERROR") ? "ERROR" : line.Contains("WARNING") ? "WARNING" : string.Empty;
 
-                var message = line.Substring((line.IndexOf(logEventType, StringComparison.Ordinal) + (logEventType.Length + 1)));
+                    var message = line.Substring((line.IndexOf(logEventType, StringComparison.Ordinal) + (logEventType.Length + 1)));
 
-                var exactDate = DateTime.ParseExact(timeString, new[] { "hh:mm:ss:fff" }, new CultureInfo("en-US"), DateTimeStyles.None);
+                    var exactDate = DateTime.ParseExact(timeString, new[] { "hh:mm:ss:fff" }, new CultureInfo("en-US"), DateTimeStyles.None);
 
-                var time = new TimeSpan(0, exactDate.Hour, exactDate.Minute, exactDate.Second, exactDate.Millisecond);
+                    var time = new TimeSpan(0, exactDate.Hour, exactDate.Minute, exactDate.Second, exactDate.Millisecond);
 
-                var logEventValue = TagHelper.AreTagsEqual(logEventType, "DEBUG") ? LogEvent.Debug : TagHelper.AreTagsEqual(logEventType, "INFO") ? LogEvent.Info : TagHelper.AreTagsEqual(logEventType, "WARNING") ? LogEvent.Warning : TagHelper.AreTagsEqual(logEventType, "ERROR") ? LogEvent.Error : 0;
+                    var logEventValue = TagHelper.AreTagsEqual(logEventType, "DEBUG") ? LogEvent.Debug : TagHelper.AreTagsEqual(logEventType, "INFO") ? LogEvent.Info : TagHelper.AreTagsEqual(logEventType, "WARNING") ? LogEvent.Warning : TagHelper.AreTagsEqual(logEventType, "ERROR") ? LogEvent.Error : 0;
 
-                var logEntry = new LogEntry { Time = time, LogEvent = logEventValue, Message = message };
+                    var logEntry = new LogEntry { Time = time, LogEvent = logEventValue, Message = message };
 
-                entries.Add(logEntry);
+                    entries.Add(logEntry);
+                }
+                catch (Exception ex)
+                {
+                    // TODO: Swallow, or prepend to previous one?
+                }
             }
 
             return entries;
