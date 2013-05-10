@@ -28,7 +28,9 @@ namespace Catel.LogAnalyzer.Converters
         #endregion
 
         #region Fields
+        private static BitmapImage _debugImage;
         private static BitmapImage _errorImage;
+        private static BitmapImage _infoImage;
         private static BitmapImage _warningImage;
         #endregion
 
@@ -51,6 +53,15 @@ namespace Catel.LogAnalyzer.Converters
             var logEvent = (LogEvent)value;
             switch (logEvent)
             {
+                case LogEvent.Debug:
+                    if (_debugImage == null)
+                    {
+                        _debugImage = new BitmapImage(new Uri(string.Format("/{0};component/Resources/Images/Debug.png", AssemblyName), UriKind.RelativeOrAbsolute));
+                    }
+
+                    image = new Image { Source = _debugImage };
+                    break;
+
                 case LogEvent.Error:
                     if (_errorImage == null)
                     {
@@ -58,6 +69,15 @@ namespace Catel.LogAnalyzer.Converters
                     }
 
                     image = new Image {Source = _errorImage};
+                    break;
+
+                case LogEvent.Info:
+                    if (_infoImage == null)
+                    {
+                        _infoImage = new BitmapImage(new Uri(string.Format("/{0};component/Resources/Images/Info.png", AssemblyName), UriKind.RelativeOrAbsolute));
+                    }
+
+                    image = new Image { Source = _infoImage };
                     break;
 
                 case LogEvent.Warning:

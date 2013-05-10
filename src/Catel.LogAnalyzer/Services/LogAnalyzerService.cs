@@ -3,6 +3,7 @@
 //   Copyright (c) 2008 - 2013 Catel development team. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
 namespace Catel.LogAnalyzer
 {
     using System;
@@ -10,8 +11,7 @@ namespace Catel.LogAnalyzer
     using System.Globalization;
     using System.IO;
     using System.Linq;
-
-    using Catel.Logging;
+    using Logging;
 
     public class LogAnalyzerService : ILogAnalyzerService
     {
@@ -37,13 +37,13 @@ namespace Catel.LogAnalyzer
 
                     var message = line.Substring((line.IndexOf(logEventType, StringComparison.Ordinal) + (logEventType.Length + 1)));
 
-                    var exactDate = DateTime.ParseExact(timeString, new[] { "hh:mm:ss:fff" }, new CultureInfo("en-US"), DateTimeStyles.None);
+                    var exactDate = DateTime.ParseExact(timeString, new[] {"hh:mm:ss:fff"}, new CultureInfo("en-US"), DateTimeStyles.None);
 
                     var time = new TimeSpan(0, exactDate.Hour, exactDate.Minute, exactDate.Second, exactDate.Millisecond);
 
                     var logEventValue = TagHelper.AreTagsEqual(logEventType, "DEBUG") ? LogEvent.Debug : TagHelper.AreTagsEqual(logEventType, "INFO") ? LogEvent.Info : TagHelper.AreTagsEqual(logEventType, "WARNING") ? LogEvent.Warning : TagHelper.AreTagsEqual(logEventType, "ERROR") ? LogEvent.Error : 0;
 
-                    var logEntry = new LogEntry { Time = time, LogEvent = logEventValue, Message = message };
+                    var logEntry = new LogEntry {Time = time, LogEvent = logEventValue, Message = message};
 
                     entries.Add(logEntry);
                 }

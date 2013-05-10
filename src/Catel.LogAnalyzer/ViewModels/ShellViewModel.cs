@@ -3,6 +3,7 @@
 //   Copyright (c) 2008 - 2013 Catel development team. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
 namespace Catel.LogAnalyzer.ViewModels
 {
     using System.Collections.Generic;
@@ -10,14 +11,13 @@ namespace Catel.LogAnalyzer.ViewModels
     using System.Linq;
     using System.Text;
     using System.Xml;
-    using Catel.Collections;
-    using Catel.Data;
-    using Catel.Logging;
-    using Catel.MVVM;
-
+    using Collections;
+    using Data;
     using ICSharpCode.AvalonEdit.Document;
     using ICSharpCode.AvalonEdit.Highlighting;
     using ICSharpCode.AvalonEdit.Highlighting.Xshd;
+    using Logging;
+    using MVVM;
     using Models;
 
     /// <summary>
@@ -29,12 +29,12 @@ namespace Catel.LogAnalyzer.ViewModels
         /// <summary>
         /// Register the AvailableTraceLevels property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData AvailableTraceLevelsProperty = RegisterProperty("AvailableTraceLevels", typeof(FastObservableCollection<LogEvent>), () => new FastObservableCollection<LogEvent>(Enum<LogEvent>.GetValues().OrderBy(value => value).ToArray()));
+        public static readonly PropertyData AvailableTraceLevelsProperty = RegisterProperty("AvailableTraceLevels", typeof (FastObservableCollection<LogEvent>), () => new FastObservableCollection<LogEvent>(Enum<LogEvent>.GetValues().OrderBy(value => value).ToArray()));
 
         /// <summary>
         /// Register the SelectedTraceLevel property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData SelectedLogEventProperty = RegisterProperty("SelectedLogEvent", typeof(LogEvent), LogEvent.Debug, (sender, e) => { });
+        public static readonly PropertyData SelectedLogEventProperty = RegisterProperty("SelectedLogEvent", typeof (LogEvent), LogEvent.Debug, (sender, e) => { });
         #endregion
 
         #region Fields
@@ -52,9 +52,6 @@ namespace Catel.LogAnalyzer.ViewModels
         /// </summary>
         public ShellViewModel(ILogAnalyzerService logAnalyzerService)
         {
-            //var logAnalyzerService = GetService<ILogAnalyzerService>();
-
-            // Argument.IsNotNull(() => logAnalyzerService);
             _logAnalyzerService = logAnalyzerService;
 
             ParseCommand = new Command(OnParseCommandExecute, OnParseCommandCanExecute);
@@ -66,6 +63,7 @@ namespace Catel.LogAnalyzer.ViewModels
             Document = new TextDocument();
             Filter = new LogFilter();
             Filter.PropertyChanged += OnFilterPropertyChanged;
+            Document.Changing += OnDocumentChanging;
 
             _logEntries = new FastObservableCollection<LogEntry>();
 
@@ -74,12 +72,7 @@ namespace Catel.LogAnalyzer.ViewModels
                 HighlightingDefinition = HighlightingLoader.Load(reader, HighlightingManager.Instance);
             }
 
-            HighlightingManager.Instance.RegisterHighlighting("CatelHighlighting", new[] { ".cool" }, HighlightingDefinition);
-        }
-
-        private void OnFilterPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            // DODO
+            HighlightingManager.Instance.RegisterHighlighting("CatelHighlighting", new[] {".cool"}, HighlightingDefinition);
         }
         #endregion
 
@@ -92,10 +85,7 @@ namespace Catel.LogAnalyzer.ViewModels
         /// </value>
         public override string Title
         {
-            get
-            {
-                return "Catel Log Analyzer";
-            }
+            get { return "Catel Log Analyzer"; }
         }
 
         public IHighlightingDefinition HighlightingDefinition { get; private set; }
@@ -107,14 +97,8 @@ namespace Catel.LogAnalyzer.ViewModels
         /// </summary>
         public FastObservableCollection<LogEvent> AvailableLogEvents
         {
-            get
-            {
-                return GetValue<FastObservableCollection<LogEvent>>(AvailableTraceLevelsProperty);
-            }
-            set
-            {
-                SetValue(AvailableTraceLevelsProperty, value);
-            }
+            get { return GetValue<FastObservableCollection<LogEvent>>(AvailableTraceLevelsProperty); }
+            set { SetValue(AvailableTraceLevelsProperty, value); }
         }
 
         public FastObservableCollection<LogEntry> Top10SlowestMethods { get; set; }
@@ -131,14 +115,8 @@ namespace Catel.LogAnalyzer.ViewModels
         /// </value>
         public LogEvent SelectedLogEvent
         {
-            get
-            {
-                return GetValue<LogEvent>(SelectedLogEventProperty);
-            }
-            set
-            {
-                SetValue(SelectedLogEventProperty, value);
-            }
+            get { return GetValue<LogEvent>(SelectedLogEventProperty); }
+            set { SetValue(SelectedLogEventProperty, value); }
         }
 
         public TextDocument Document { get; set; }
@@ -226,6 +204,16 @@ namespace Catel.LogAnalyzer.ViewModels
         #endregion
 
         #region Methods
+        private void OnDocumentChanging(object sender, DocumentChangeEventArgs e)
+        {
+            //TODO
+        }
+
+        private void OnFilterPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            // TODO
+        }
+
         /// <summary>
         /// Converts a list of trace entries to a string.
         /// </summary>
@@ -271,27 +259,6 @@ namespace Catel.LogAnalyzer.ViewModels
             // }
             // }
             return rv.ToString();
-        }
-
-        /// <summary>
-        /// Updates the trace level and rebuilds the trace list.
-        /// </summary>
-        private void UpdateTraceLevel()
-        {
-            // TraceEntryCollection.Clear();
-
-            // if (SelectedTraceEntryCollection != null)
-            // {
-            // SelectedTraceEntryCollection.Clear();
-            // }
-
-            // foreach (var entry in _traceEntries)
-            // {
-            // if (EntryMatchesLevel(entry))
-            // {
-            // TraceEntryCollection.Add(entry);
-            // }
-            // }
         }
 
         /// <summary>
