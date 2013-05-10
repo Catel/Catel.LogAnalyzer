@@ -9,13 +9,15 @@ namespace Catel.LogAnalyzer.ViewModels
     using System.ComponentModel;
     using System.Linq;
     using System.Text;
-
+    using System.Xml;
     using Catel.Collections;
     using Catel.Data;
     using Catel.Logging;
     using Catel.MVVM;
 
     using ICSharpCode.AvalonEdit.Document;
+    using ICSharpCode.AvalonEdit.Highlighting;
+    using ICSharpCode.AvalonEdit.Highlighting.Xshd;
     using Models;
 
     /// <summary>
@@ -66,6 +68,13 @@ namespace Catel.LogAnalyzer.ViewModels
             Filter.PropertyChanged += OnFilterPropertyChanged;
 
             _logEntries = new FastObservableCollection<LogEntry>();
+
+            using (var reader = new XmlTextReader("Resources\\HighlightingDefinition.xshd"))
+            {
+                HighlightingDefinition = HighlightingLoader.Load(reader, HighlightingManager.Instance);
+            }
+
+            HighlightingManager.Instance.RegisterHighlighting("CatelHighlighting", new[] { ".cool" }, HighlightingDefinition);
         }
 
         private void OnFilterPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -88,6 +97,8 @@ namespace Catel.LogAnalyzer.ViewModels
                 return "Catel Log Analyzer";
             }
         }
+
+        public IHighlightingDefinition HighlightingDefinition { get; private set; }
 
         public LogFilter Filter { get; set; }
 

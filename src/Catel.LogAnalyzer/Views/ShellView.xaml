@@ -17,15 +17,7 @@
         </catel:StackGrid.RowDefinitions>
 
         <views:FilterView DataContext="{Binding Filter}" />
-
-        <avalonEdit:TextEditor 
-            FontFamily="Consolas"
-            FontSize="10pt"
-            SyntaxHighlighting="CatelHighlighting"
-            Document="{Binding Document}"
-            LineNumbersForeground="ForestGreen"
-            ShowLineNumbers="True"   />
-
+        
         <catel:StackGrid>
             <catel:StackGrid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -33,19 +25,51 @@
                 <RowDefinition Height="*" />
             </catel:StackGrid.RowDefinitions>
 
-            <Label Content="Logs :" HorizontalAlignment="Left" FontWeight="Bold"/>
-            <Button Content="Parse" Command="{Binding ParseCommand}" Width="75"/>
-            <TabControl>
-                <TabItem Header="Top 10 slowest methods">
-                    <views:ResultsView DataContext="{Binding Top10SlowestMethods}" />
-                </TabItem>
-                <TabItem Header="Top 10 most common lines">
-                    <views:ResultsView DataContext="{Binding Top10MostCommonLines}" />
-                </TabItem>
-                <TabItem Header="Top 10 errors and warnings">
-                    <views:ResultsView DataContext="{Binding Top10ErrorsAndWarnings}" />
-                </TabItem>
-            </TabControl>
+            <Label Content="Log entries :" 
+                   HorizontalAlignment="Left" 
+                   FontWeight="Bold"/>
+
+            <avalonEdit:TextEditor 
+            FontFamily="Consolas"
+            FontSize="10pt"
+            SyntaxHighlighting="{Binding HighlightingDefinition}"
+            Document="{Binding Document}"
+            LineNumbersForeground="ForestGreen"
+            ShowLineNumbers="True" Margin="0,0,0,40" Grid.RowSpan="2">
+                <avalonEdit:TextEditor.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Command="{Binding ParseCommand}" Header="Parse" />
+                        <Separator />
+                        <MenuItem Command="Cut" Header="Cut" />
+                        <MenuItem Command="Copy" Header="Copy" />
+                        <MenuItem Command="Paste" Header="Paste" />
+                        <MenuItem Command="Delete" Header="Delete" />
+                        <Separator />
+                        <MenuItem Command="SelectAll" Header="Select All"
+                    ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Command.Text}"/>
+                        <Separator />
+                        <MenuItem Command="Undo" Header="Undo" />
+                        <MenuItem Command="Redo" Header="Redo" />
+                    </ContextMenu>
+                </avalonEdit:TextEditor.ContextMenu>
+            </avalonEdit:TextEditor>
+
+            <Button Content="Parse" Command="{Binding ParseCommand}" 
+                    Height="25"
+                    Width="75" Margin="0,0,0,10" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
+            
         </catel:StackGrid>
+
+        <TabControl>
+            <TabItem Header="Top 10 slowest methods">
+                <views:ResultsView DataContext="{Binding Top10SlowestMethods}" />
+            </TabItem>
+            <TabItem Header="Top 10 most common lines">
+                <views:ResultsView DataContext="{Binding Top10MostCommonLines}" />
+            </TabItem>
+            <TabItem Header="Top 10 errors and warnings">
+                <views:ResultsView DataContext="{Binding Top10ErrorsAndWarnings}" />
+            </TabItem>
+        </TabControl>
     </catel:StackGrid>
 </catel:DataWindow>
