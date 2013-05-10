@@ -1,0 +1,20 @@
+﻿<catel:UserControl x:Class="Catel.LogAnalyzer.Views.FilterView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				   xmlns:catel="http://catel.codeplex.com">
+    
+    <!-- Resources -->
+    <UserControl.Resources>
+    </UserControl.Resources>
+
+    <!-- Content -->
+    <catel:StackGrid>
+		<catel:StackGrid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</catel:StackGrid.RowDefinitions>
+		
+		<Label Content="{Binding Title}" />
+        <Label Content="[create filter here ]" />
+    </catel:StackGrid>
+</catel:UserControl>

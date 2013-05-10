@@ -6,6 +6,7 @@
 namespace Catel.LogAnalyzer.ViewModels
 {
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Linq;
     using System.Text;
 
@@ -15,6 +16,7 @@ namespace Catel.LogAnalyzer.ViewModels
     using Catel.MVVM;
 
     using ICSharpCode.AvalonEdit.Document;
+    using Models;
 
     /// <summary>
     /// Shell view model.
@@ -46,9 +48,9 @@ namespace Catel.LogAnalyzer.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="ShellViewModel"/> class.
         /// </summary>
-        public ShellViewModel()
+        public ShellViewModel(ILogAnalyzerService logAnalyzerService)
         {
-            var logAnalyzerService = GetService<ILogAnalyzerService>();
+            //var logAnalyzerService = GetService<ILogAnalyzerService>();
 
             // Argument.IsNotNull(() => logAnalyzerService);
             _logAnalyzerService = logAnalyzerService;
@@ -60,8 +62,15 @@ namespace Catel.LogAnalyzer.ViewModels
             SelectedLogEvent = AvailableLogEvents.FirstOrDefault();
 
             Document = new TextDocument();
+            Filter = new LogFilter();
+            Filter.PropertyChanged += OnFilterPropertyChanged;
 
             _logEntries = new FastObservableCollection<LogEntry>();
+        }
+
+        private void OnFilterPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            // DODO
         }
         #endregion
 
@@ -79,6 +88,8 @@ namespace Catel.LogAnalyzer.ViewModels
                 return "Catel Log Analyzer";
             }
         }
+
+        public LogFilter Filter { get; set; }
 
         /// <summary>
         /// Gets or sets the available trace levels.

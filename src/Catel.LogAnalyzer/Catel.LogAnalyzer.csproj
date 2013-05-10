@@ -127,9 +127,25 @@
     </Compile>
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Converters\OutputTypeConverter.cs" />
+    <Compile Include="ViewModels\FilterViewModel.cs" />
+    <Compile Include="ViewModels\ResultsViewModel.cs" />
+    <Compile Include="Views\FilterView.xaml.cs">
+      <DependentUpon>FilterView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ResultsView.xaml.cs">
+      <DependentUpon>ResultsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SplashScreen.xaml.cs">
       <DependentUpon>SplashScreen.xaml</DependentUpon>
     </Compile>
+    <Page Include="Views\FilterView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ResultsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ShellView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
