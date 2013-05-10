@@ -2,12 +2,278 @@
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 				  xmlns:catel="http://catel.codeplex.com"
+                  xmlns:avalonEdit="clr-namespace:ICSharpCode.AvalonEdit;assembly=ICSharpCode.AvalonEdit"
+                  xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+                  xmlns:logging="clr-namespace:Catel.Logging;assembly=Catel.Core"
+                  xmlns:converters="clr-namespace:Catel.LogAnalyzer.Converters"
                   Icon="/Resources/Images/logo.png"
                   ShowInTaskbar="True" ResizeMode="CanResize" SizeToContent="Manual"                   
                   WindowStartupLocation="CenterScreen" WindowState="Maximized">
+    
+    <catel:DataWindow.Resources>
+        <converters:OutputTypeConverter x:Key="OutputTypeConverter" />
+        
+        <ContextMenu x:Key="LogEntryContextMenu">
+            <MenuItem Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListView}}, Path=DataContext.CopyToClipboard}" Header="Copy to clipboard" />
+        </ContextMenu>
+    </catel:DataWindow.Resources>
 
     <!-- Content -->
     <Grid>
+        <avalonEdit:TextEditor 
+            Margin="10,74,10,350"
+            FontFamily="Consolas"
+            FontSize="10pt"
+            SyntaxHighlighting="CatelHighlighting"
+            Document="{Binding Document}"
+            LineNumbersForeground="ForestGreen"
+            ShowLineNumbers="True"   />
+
+        <Label Content="Logs :" HorizontalAlignment="Left" Margin="10,48,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+        <Button Content="Parse" 
+                Command="{Binding ParseCommand}"
+                HorizontalAlignment="Left" Margin="10,0,0,10" VerticalAlignment="Bottom" Width="75"/>
+        <TabControl Margin="10,0,10,46" Height="299" VerticalAlignment="Bottom">
+            <TabItem Header="Top 10 slowest methods">
+                <ListView ItemsSource="{Binding Top10SlowestMethods}">
+                    <i:Interaction.Behaviors>
+                        <catel:KeyPressToCommand Command="{Binding CopyTopTenSlowestToClipboard}" Key="C" Modifiers="Ctrl" />
+                    </i:Interaction.Behaviors>
+
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListViewItem}">
+                            <Style.Triggers>
+                                <!-- Error -->
+                                <DataTrigger Binding="{Binding LogEvent}">
+                                    <DataTrigger.Value>
+                                        <logging:LogEvent>Error</logging:LogEvent>
+                                    </DataTrigger.Value>
+                                    <Setter Property="Foreground" Value="Red" />
+                                </DataTrigger>
+
+                                <!-- Warning-->
+                                <DataTrigger Binding="{Binding LogEvent}">
+                                    <DataTrigger.Value>
+                                        <logging:LogEvent>Warning</logging:LogEvent>
+                                    </DataTrigger.Value>
+                                    <Setter Property="Foreground" Value="DarkOrange" />
+                                </DataTrigger>
+
+                                <Trigger Property="IsMouseOver" Value="true">
+                                    <Setter Property="Background" Value="LightGray" />
+                                </Trigger>
+                            </Style.Triggers>
+
+                            <Setter Property="VerticalAlignment" Value="Top" />
+                            <Setter Property="ContextMenu" Value="{StaticResource LogEntryContextMenu}" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+
+                    <ListView.View>
+                        <GridView>
+                            <!-- Icon -->
+                            <GridViewColumn Header="" Width="27">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <!--<ContentControl Content="{Binding LogEvent}" />-->
+                                        <ContentControl Content="{Binding LogEvent, Converter={StaticResource OutputTypeConverter}}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+
+                            <!-- Time (Default Width = 120) -->
+                            <GridViewColumn Header="Time">
+
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Time}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+
+                            <!-- Level -->
+                            <GridViewColumn Header="Level" Width="75">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding LogEvent}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+
+                            <!-- Message -->
+                            <GridViewColumn Header="Message" Width="1000">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Message}" FontFamily="Courier New" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </TabItem>
+            <TabItem Header="Top 10 most common lines">
+                <ListView ItemsSource="{Binding Top10MostCommonLines}">
+                    <i:Interaction.Behaviors>
+                        <catel:KeyPressToCommand Command="{Binding CopyTopTenSlowestToClipboard}" Key="C" Modifiers="Ctrl" />
+                    </i:Interaction.Behaviors>
+
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListViewItem}">
+                            <Style.Triggers>
+                                <!-- Error -->
+                                <DataTrigger Binding="{Binding LogEvent}">
+                                    <DataTrigger.Value>
+                                        <logging:LogEvent>Error</logging:LogEvent>
+                                    </DataTrigger.Value>
+                                    <Setter Property="Foreground" Value="Red" />
+                                </DataTrigger>
+
+                                <!-- Warning-->
+                                <DataTrigger Binding="{Binding LogEvent}">
+                                    <DataTrigger.Value>
+                                        <logging:LogEvent>Warning</logging:LogEvent>
+                                    </DataTrigger.Value>
+                                    <Setter Property="Foreground" Value="DarkOrange" />
+                                </DataTrigger>
+
+                                <Trigger Property="IsMouseOver" Value="true">
+                                    <Setter Property="Background" Value="LightGray" />
+                                </Trigger>
+                            </Style.Triggers>
+
+                            <Setter Property="VerticalAlignment" Value="Top" />
+                            <Setter Property="ContextMenu" Value="{StaticResource LogEntryContextMenu}" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+
+                    <ListView.View>
+                        <GridView>
+                            <!-- Icon -->
+                            <GridViewColumn Header="" Width="27">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <!--<ContentControl Content="{Binding LogEvent}" />-->
+                                        <ContentControl Content="{Binding LogEvent, Converter={StaticResource OutputTypeConverter}}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+
+                            <!-- Time (Default Width = 120) -->
+                            <GridViewColumn Header="Time">
+
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Time}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+
+                            <!-- Level -->
+                            <GridViewColumn Header="Level" Width="75">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding LogEvent}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+
+                            <!-- Message -->
+                            <GridViewColumn Header="Message" Width="1000">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Message}" FontFamily="Courier New" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </TabItem>
+            <TabItem Header="Top 10 errors and warnings">
+                <ListView ItemsSource="{Binding Top10ErrorsAndWarnings}">
+                    <i:Interaction.Behaviors>
+                        <catel:KeyPressToCommand Command="{Binding CopyTopTenSlowestToClipboard}" Key="C" Modifiers="Ctrl" />
+                    </i:Interaction.Behaviors>
+
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListViewItem}">
+                            <Style.Triggers>
+                                <!-- Error -->
+                                <DataTrigger Binding="{Binding LogEvent}">
+                                    <DataTrigger.Value>
+                                        <logging:LogEvent>Error</logging:LogEvent>
+                                    </DataTrigger.Value>
+                                    <Setter Property="Foreground" Value="Red" />
+                                </DataTrigger>
+
+                                <!-- Warning-->
+                                <DataTrigger Binding="{Binding LogEvent}">
+                                    <DataTrigger.Value>
+                                        <logging:LogEvent>Warning</logging:LogEvent>
+                                    </DataTrigger.Value>
+                                    <Setter Property="Foreground" Value="DarkOrange" />
+                                </DataTrigger>
+
+                                <Trigger Property="IsMouseOver" Value="true">
+                                    <Setter Property="Background" Value="LightGray" />
+                                </Trigger>
+                            </Style.Triggers>
+
+                            <Setter Property="VerticalAlignment" Value="Top" />
+                            <Setter Property="ContextMenu" Value="{StaticResource LogEntryContextMenu}" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+
+                    <ListView.View>
+                        <GridView>
+                            <!-- Icon -->
+                            <GridViewColumn Header="" Width="27">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <!--<ContentControl Content="{Binding LogEvent}" />-->
+                                        <ContentControl Content="{Binding LogEvent, Converter={StaticResource OutputTypeConverter}}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+
+                            <!-- Time (Default Width = 120) -->
+                            <GridViewColumn Header="Time">
+
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Time}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+
+                            <!-- Level -->
+                            <GridViewColumn Header="Level" Width="75">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding LogEvent}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+
+                            <!-- Message -->
+                            <GridViewColumn Header="Message" Width="1000">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Message}" FontFamily="Courier New" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </TabItem>
+        </TabControl>
+        <Label Content="Level :" HorizontalAlignment="Left" Margin="10,17,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+        <ComboBox HorizontalAlignment="Left" 
+                  ItemsSource="{Binding AvailableLogEvents}"
+                  SelectedItem="{Binding SelectedLogEvent}"
+                  Margin="61,17,0,0" VerticalAlignment="Top" Width="150"/>
 
     </Grid>
 </catel:DataWindow>
