@@ -13,6 +13,7 @@ namespace Catel.LogAnalyzer.ViewModels
     using System.Xml;
     using Collections;
     using Data;
+    using Helpers;
     using ICSharpCode.AvalonEdit.Document;
     using ICSharpCode.AvalonEdit.Highlighting;
     using ICSharpCode.AvalonEdit.Highlighting.Xshd;
@@ -57,6 +58,8 @@ namespace Catel.LogAnalyzer.ViewModels
             ParseCommand = new Command(OnParseCommandExecute, OnParseCommandCanExecute);
 
             CopyTopTenSlowestToClipboard = new Command(OnCopyTopTenSlowestToClipboardExecute, OnCopyTopTenSlowestToClipboardCanExecute);
+
+            LoadFile = new Command<string>(OnLoadFileExecute);
 
             SelectedLogEvent = AvailableLogEvents.FirstOrDefault();
 
@@ -134,9 +137,36 @@ namespace Catel.LogAnalyzer.ViewModels
         /// Gets the CopyToClipboard command.
         /// </summary>
         public Command CopyTopTenSlowestToClipboard { get; private set; }
+
+        /// <summary>
+        /// Gets the LoadFile command.
+        /// </summary>
+        public Command<string> LoadFile { get; private set; }
         #endregion
 
         #region Methods
+        /// <summary>
+        /// Method to invoke when the LoadFile command is executed.
+        /// </summary>
+        /// <param name="fileName">Name of the file.</param>
+        private void OnLoadFileExecute(string fileName)
+        {
+            Argument.IsNotNullOrWhitespace(() => fileName);
+
+            var fileLines = FileHelper.ReadAllLines(fileName);
+
+            var textToAdd = fileLines.Aggregate((line1, line2) => string.Format("{0}\n{1}", line1, line2)).Trim();
+
+            if (string.IsNullOrWhiteSpace(Document.Text))
+            {
+                Document.Text = textToAdd;
+            }
+            else
+            {
+                Document.Text += string.Format("\n{0}", textToAdd);
+            }
+        }
+
         /// <summary>
         /// Method to check whether the ParseCommand command can be executed.
         /// </summary>

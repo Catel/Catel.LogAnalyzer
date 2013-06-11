@@ -35,7 +35,7 @@ namespace Catel.LogAnalyzer
 
                     var logEventType = line.Contains("DEBUG") ? "DEBUG" : line.Contains("INFO") ? "INFO" : line.Contains("ERROR") ? "ERROR" : line.Contains("WARNING") ? "WARNING" : string.Empty;
 
-                    var message = line.Substring((line.IndexOf(logEventType, StringComparison.Ordinal) + (logEventType.Length + 1)));
+                    var message = line.Substring((line.IndexOf(logEventType, StringComparison.Ordinal) + (logEventType.Length + 1))).Trim();
 
                     var exactDate = DateTime.ParseExact(timeString, new[] {"hh:mm:ss:fff"}, new CultureInfo("en-US"), DateTimeStyles.None);
 

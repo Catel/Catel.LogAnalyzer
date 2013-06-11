@@ -4,6 +4,7 @@
 				  xmlns:catel="http://catel.codeplex.com"
                   xmlns:avalonEdit="clr-namespace:ICSharpCode.AvalonEdit;assembly=ICSharpCode.AvalonEdit"
                   xmlns:views="clr-namespace:Catel.LogAnalyzer.Views"
+                  xmlns:behaviors="clr-namespace:Catel.LogAnalyzer.Behaviors"
                   Icon="/Resources/Images/logo.png"
                   ShowInTaskbar="True" ResizeMode="CanResize" SizeToContent="Manual"                   
                   WindowStartupLocation="CenterScreen" WindowState="Maximized">
@@ -35,6 +36,7 @@
             SyntaxHighlighting="{Binding HighlightingDefinition}"
             Document="{Binding Document}"
             LineNumbersForeground="ForestGreen"
+            behaviors:DropFileBehavior.Command="{Binding LoadFile}"
             ShowLineNumbers="True" Margin="0,0,0,40" Grid.RowSpan="2">
                 <avalonEdit:TextEditor.ContextMenu>
                     <ContextMenu>
@@ -54,7 +56,7 @@
                 </avalonEdit:TextEditor.ContextMenu>
             </avalonEdit:TextEditor>
 
-            <Button Content="Parse" Command="{Binding ParseCommand}" 
+            <Button Content="Parse" Command="{Binding ParseCommand}"
                     Height="25"
                     Width="75" Margin="0,0,0,10" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
             
