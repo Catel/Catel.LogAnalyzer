@@ -6,8 +6,10 @@
 
 namespace Catel.LogAnalyzer.ViewModels
 {
+    using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.IO;
     using System.Linq;
     using System.Text;
     using System.Xml;
@@ -19,6 +21,7 @@ namespace Catel.LogAnalyzer.ViewModels
     using ICSharpCode.AvalonEdit.Highlighting.Xshd;
     using Logging;
     using MVVM;
+    using MVVM.Services;
     using Models;
 
     /// <summary>
@@ -36,9 +39,37 @@ namespace Catel.LogAnalyzer.ViewModels
         /// Register the SelectedTraceLevel property so it is known in the class.
         /// </summary>
         public static readonly PropertyData SelectedLogEventProperty = RegisterProperty("SelectedLogEvent", typeof (LogEvent), LogEvent.Debug, (sender, e) => { });
+
+        /// <summary>
+        /// Register the IsLiveViewEnabled property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsLiveViewEnabledProperty = RegisterProperty("IsLiveViewEnabled", typeof (bool), null, (sender, args) =>
+            {
+                var viewModel = sender as ShellViewModel;
+
+                var value = (bool) args.NewValue;
+
+                if (viewModel == null)
+                {
+                    return;
+                }
+
+                if (value)
+                {
+                    viewModel.SubscribeToFileChanges();
+                }
+                else
+                {
+                    if (viewModel.FileChangesSubscription != null)
+                    {
+                        viewModel.FileChangesSubscription.Dispose();
+                    }
+                }
+            });
         #endregion
 
         #region Fields
+        private readonly IFileWatcherService _fileWatcherService;
         private readonly ILogAnalyzerService _logAnalyzerService;
 
         /// <summary>
@@ -51,9 +82,10 @@ namespace Catel.LogAnalyzer.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="ShellViewModel"/> class.
         /// </summary>
-        public ShellViewModel(ILogAnalyzerService logAnalyzerService)
+        public ShellViewModel(ILogAnalyzerService logAnalyzerService, IFileWatcherService fileWatcherService)
         {
             _logAnalyzerService = logAnalyzerService;
+            _fileWatcherService = fileWatcherService;
 
             ParseCommand = new Command(OnParseCommandExecute, OnParseCommandCanExecute);
 
@@ -91,9 +123,49 @@ namespace Catel.LogAnalyzer.ViewModels
             get { return "Catel Log Analyzer"; }
         }
 
+        /// <summary>
+        /// Gets the dispatcher service.
+        /// </summary>
+        /// <value>
+        /// The dispatcher service.
+        /// </value>
+        public IDispatcherService DispatcherService
+        {
+            get { return GetService<IDispatcherService>(); }
+        }
+
+        /// <summary>
+        /// Gets the highlighting definition.
+        /// </summary>
+        /// <value>
+        /// The highlighting definition.
+        /// </value>
         public IHighlightingDefinition HighlightingDefinition { get; private set; }
 
+        /// <summary>
+        /// Gets or sets the filter.
+        /// </summary>
+        /// <value>
+        /// The filter.
+        /// </value>
         public LogFilter Filter { get; set; }
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool IsLiveViewEnabled
+        {
+            get { return GetValue<bool>(IsLiveViewEnabledProperty); }
+            set { SetValue(IsLiveViewEnabledProperty, value); }
+        }
+
+        /// <summary>
+        /// Gets or sets the dropped file.
+        /// </summary>
+        /// <value>
+        /// The dropped file.
+        /// </value>
+        public string DroppedFile { get; private set; }
 
         /// <summary>
         /// Gets or sets the available trace levels.
@@ -122,7 +194,18 @@ namespace Catel.LogAnalyzer.ViewModels
             set { SetValue(SelectedLogEventProperty, value); }
         }
 
-        public TextDocument Document { get; set; }
+        /// <summary>
+        /// Gets or sets the document.
+        /// </summary>
+        /// <value>
+        /// The document.
+        /// </value>
+        public TextDocument Document { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public IDisposable FileChangesSubscription { get; private set; }
         #endregion
 
         #region Commands
@@ -153,9 +236,18 @@ namespace Catel.LogAnalyzer.ViewModels
         {
             Argument.IsNotNullOrWhitespace(() => fileName);
 
-            var fileLines = FileHelper.ReadAllLines(fileName);
+            DroppedFile = fileName;
 
-            var textToAdd = fileLines.Aggregate((line1, line2) => string.Format("{0}\n{1}", line1, line2)).Trim();
+            var fileLines = FileHelper.ReadAllLines(DroppedFile)
+                                      .Where(line => !string.IsNullOrWhiteSpace(line));
+
+            var textToAdd = fileLines.Aggregate((line1, line2) => string.Format("{0}\n{1}", line1, line2))
+                                     .Trim();
+
+            if (Document == null)
+            {
+                return;
+            }
 
             if (string.IsNullOrWhiteSpace(Document.Text))
             {
@@ -165,6 +257,40 @@ namespace Catel.LogAnalyzer.ViewModels
             {
                 Document.Text += string.Format("\n{0}", textToAdd);
             }
+
+            if (IsLiveViewEnabled)
+            {
+                SubscribeToFileChanges();
+            }
+        }
+
+        /// <summary>
+        /// Subscribes to file changes.
+        /// </summary>
+        private void SubscribeToFileChanges()
+        {
+            if (!IsLiveViewEnabled || DroppedFile == null)
+            {
+                return;
+            }
+
+            var fileInfo = new FileInfo(DroppedFile);
+
+            FileChangesSubscription = _fileWatcherService.ObserveFolderChanges(fileInfo.DirectoryName, string.Format("*{0}", fileInfo.Extension), TimeSpan.FromMilliseconds(100))
+                                                      .Subscribe(eventArgs => DispatcherService.BeginInvoke(() =>
+                                                          {
+                                                              var fileLines = FileHelper.ReadAllLines(DroppedFile)
+                                                                                        .Where(line => !string.IsNullOrWhiteSpace(line));
+
+                                                              var textToAdd = fileLines.Aggregate((line1, line2) => string.Format("{0}\n{1}", line1, line2)).Trim();
+
+                                                              if (Document == null)
+                                                              {
+                                                                  return;
+                                                              }
+
+                                                              Document.Text = textToAdd;
+                                                          }));
         }
 
         /// <summary>

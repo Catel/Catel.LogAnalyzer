@@ -7,7 +7,7 @@
 	<!-- This is the main ruleset. -->
 	<RuleSet>
 		<Keywords fontWeight="bold" 
-              foreground="BLUE">
+              foreground="Blue">
 			<Word>DEBUG</Word>
 		</Keywords>
 

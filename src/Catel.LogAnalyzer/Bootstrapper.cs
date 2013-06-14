@@ -3,15 +3,14 @@
 //   Copyright (c) 2008 - 2013 Catel development team. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
 namespace Catel.LogAnalyzer
 {
-    using Catel.IoC;
-    using Catel.LogAnalyzer.Views;
-    using Catel.Logging;
-    using Catel.MVVM;
-    using Catel.MVVM.ViewModels;
-    using Catel.Windows;
-    using Catel.Windows.Controls;
+    using IoC;
+    using Logging;
+    using MVVM;
+    using MVVM.ViewModels;
+    using Views;
 
     /// <summary>
     /// The bootstrapper.
@@ -32,10 +31,10 @@ namespace Catel.LogAnalyzer
             Environment.RegisterDefaultViewModelServices();
 
             var viewLocator = serviceLocator.ResolveType<IViewLocator>();
-            viewLocator.Register(typeof(ProgressNotifyableViewModel), typeof(SplashScreen));
+            viewLocator.Register(typeof (ProgressNotifyableViewModel), typeof (SplashScreen));
 
             var viewModelLocator = serviceLocator.ResolveType<IViewModelLocator>();
-            viewModelLocator.Register(typeof(SplashScreen), typeof(ProgressNotifyableViewModel));
+            viewModelLocator.Register(typeof (SplashScreen), typeof (ProgressNotifyableViewModel));
         }
         #endregion
 
@@ -48,6 +47,7 @@ namespace Catel.LogAnalyzer
             base.ConfigureContainer();
 
             Container.RegisterType<ILogAnalyzerService, LogAnalyzerService>();
+            Container.RegisterType<IFileWatcherService, FileWatcherService>();
         }
         #endregion
     }
