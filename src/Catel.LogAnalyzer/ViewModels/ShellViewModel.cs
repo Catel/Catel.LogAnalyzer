@@ -47,28 +47,17 @@ namespace Catel.LogAnalyzer.ViewModels
             {
                 var viewModel = sender as ShellViewModel;
 
-                var value = (bool) args.NewValue;
-
                 if (viewModel == null)
                 {
                     return;
                 }
 
-                if (value)
-                {
-                    viewModel.SubscribeToFileChanges();
-                }
-                else
-                {
-                    if (viewModel.FileChangesSubscription != null)
-                    {
-                        viewModel.FileChangesSubscription.Dispose();
-                    }
-                }
+                viewModel.OnLiveViewChanged();
             });
         #endregion
 
         #region Fields
+        private readonly IDispatcherService _dispatcherService;
         private readonly IFileWatcherService _fileWatcherService;
         private readonly ILogAnalyzerService _logAnalyzerService;
 
@@ -82,10 +71,11 @@ namespace Catel.LogAnalyzer.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="ShellViewModel"/> class.
         /// </summary>
-        public ShellViewModel(ILogAnalyzerService logAnalyzerService, IFileWatcherService fileWatcherService)
+        public ShellViewModel(ILogAnalyzerService logAnalyzerService, IFileWatcherService fileWatcherService, IDispatcherService dispatcherService)
         {
             _logAnalyzerService = logAnalyzerService;
             _fileWatcherService = fileWatcherService;
+            _dispatcherService = dispatcherService;
 
             ParseCommand = new Command(OnParseCommandExecute, OnParseCommandCanExecute);
 
@@ -121,17 +111,6 @@ namespace Catel.LogAnalyzer.ViewModels
         public override string Title
         {
             get { return "Catel Log Analyzer"; }
-        }
-
-        /// <summary>
-        /// Gets the dispatcher service.
-        /// </summary>
-        /// <value>
-        /// The dispatcher service.
-        /// </value>
-        public IDispatcherService DispatcherService
-        {
-            get { return GetService<IDispatcherService>(); }
         }
 
         /// <summary>
@@ -277,20 +256,38 @@ namespace Catel.LogAnalyzer.ViewModels
             var fileInfo = new FileInfo(DroppedFile);
 
             FileChangesSubscription = _fileWatcherService.ObserveFolderChanges(fileInfo.DirectoryName, string.Format("*{0}", fileInfo.Extension), TimeSpan.FromMilliseconds(100))
-                                                      .Subscribe(eventArgs => DispatcherService.BeginInvoke(() =>
-                                                          {
-                                                              var fileLines = FileHelper.ReadAllLines(DroppedFile)
-                                                                                        .Where(line => !string.IsNullOrWhiteSpace(line));
+                                                         .Subscribe(eventArgs => _dispatcherService.BeginInvoke(() =>
+                                                             {
+                                                                 var fileLines = FileHelper.ReadAllLines(DroppedFile)
+                                                                                           .Where(line => !string.IsNullOrWhiteSpace(line));
 
-                                                              var textToAdd = fileLines.Aggregate((line1, line2) => string.Format("{0}\n{1}", line1, line2)).Trim();
+                                                                 var textToAdd = fileLines.Aggregate((line1, line2) => string.Format("{0}\n{1}", line1, line2)).Trim();
 
-                                                              if (Document == null)
-                                                              {
-                                                                  return;
-                                                              }
+                                                                 if (Document == null)
+                                                                 {
+                                                                     return;
+                                                                 }
 
-                                                              Document.Text = textToAdd;
-                                                          }));
+                                                                 Document.Text = textToAdd;
+                                                             }));
+        }
+
+        /// <summary>
+        /// Called when live view changed.
+        /// </summary>
+        private void OnLiveViewChanged()
+        {
+            if (IsLiveViewEnabled)
+            {
+                SubscribeToFileChanges();
+            }
+            else
+            {
+                if (FileChangesSubscription != null)
+                {
+                    FileChangesSubscription.Dispose();
+                }
+            }
         }
 
         /// <summary>
