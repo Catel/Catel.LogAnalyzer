@@ -33,7 +33,7 @@
 
             <StackPanel Orientation="Vertical">
                 <Label Content="Search text" FontWeight="Bold"/>
-                <TextBox Text="{Binding Filter}" Width="150">
+                <TextBox Name="searchBox" Text="{Binding Filter}" Width="150">
                     <i:Interaction.Behaviors>
                         <catel:UpdateBindingOnTextChanged />
                     </i:Interaction.Behaviors>

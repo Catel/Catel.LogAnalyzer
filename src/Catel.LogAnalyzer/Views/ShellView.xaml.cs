@@ -6,6 +6,7 @@
 
 namespace Catel.LogAnalyzer.Views
 {
+    using IoC;
     using Windows;
 
     /// <summary>
@@ -21,6 +22,8 @@ namespace Catel.LogAnalyzer.Views
             : base(DataWindowMode.Custom, setOwnerAndFocus: false)
         {
             InitializeComponent();
+
+            ServiceLocator.Default.RegisterInstance(textEditor.TextArea.TextView.LineTransformers);
         }
         #endregion
     }

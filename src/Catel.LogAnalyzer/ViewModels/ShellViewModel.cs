@@ -139,10 +139,28 @@ namespace Catel.LogAnalyzer.ViewModels
         /// </value>
         public string DroppedFile { get; private set; }
 
+        /// <summary>
+        /// Gets or sets the top10 slowest methods.
+        /// </summary>
+        /// <value>
+        /// The top10 slowest methods.
+        /// </value>
         public FastObservableCollection<LogEntry> Top10SlowestMethods { get; set; }
 
+        /// <summary>
+        /// Gets or sets the top10 most common lines.
+        /// </summary>
+        /// <value>
+        /// The top10 most common lines.
+        /// </value>
         public FastObservableCollection<LogEntry> Top10MostCommonLines { get; set; }
 
+        /// <summary>
+        /// Gets or sets the top10 errors and warnings.
+        /// </summary>
+        /// <value>
+        /// The top10 errors and warnings.
+        /// </value>
         public FastObservableCollection<LogEntry> Top10ErrorsAndWarnings { get; set; }
 
         /// <summary>
@@ -307,7 +325,6 @@ namespace Catel.LogAnalyzer.ViewModels
                 ParseCommand.Execute();
             }
         }
-
         #endregion
     }
 }

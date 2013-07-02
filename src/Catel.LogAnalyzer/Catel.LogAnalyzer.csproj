@@ -138,6 +138,7 @@
     <Compile Include="..\SolutionAssemblyInfo.cs">
       <Link>Properties\SolutionAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="AvalonEdit\ColorizeAvalonEdit.cs" />
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Converters\OutputTypeConverter.cs" />
     <Compile Include="Behaviors\DropFileBehavior.cs" />
