@@ -7,11 +7,9 @@
 namespace Catel.LogAnalyzer.ViewModels
 {
     using System;
-    using System.Collections.Generic;
     using System.ComponentModel;
     using System.IO;
     using System.Linq;
-    using System.Text;
     using System.Xml;
     using Collections;
     using Data;
@@ -31,16 +29,6 @@ namespace Catel.LogAnalyzer.ViewModels
     {
         #region Constants
         /// <summary>
-        /// Register the AvailableTraceLevels property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData AvailableTraceLevelsProperty = RegisterProperty("AvailableTraceLevels", typeof (FastObservableCollection<LogEvent>), () => new FastObservableCollection<LogEvent>(Enum<LogEvent>.GetValues().OrderBy(value => value).ToArray()));
-
-        /// <summary>
-        /// Register the SelectedTraceLevel property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData SelectedLogEventProperty = RegisterProperty("SelectedLogEvent", typeof (LogEvent), LogEvent.Debug, (sender, e) => { });
-
-        /// <summary>
         /// Register the IsLiveViewEnabled property so it is known in the class.
         /// </summary>
         public static readonly PropertyData IsLiveViewEnabledProperty = RegisterProperty("IsLiveViewEnabled", typeof (bool), null, (sender, args) =>
@@ -52,7 +40,7 @@ namespace Catel.LogAnalyzer.ViewModels
                     return;
                 }
 
-                viewModel.OnLiveViewChanged();
+                viewModel.OnIsLiveViewEnabledChanged();
             });
         #endregion
 
@@ -79,16 +67,21 @@ namespace Catel.LogAnalyzer.ViewModels
 
             ParseCommand = new Command(OnParseCommandExecute, OnParseCommandCanExecute);
 
-            CopyTopTenSlowestToClipboard = new Command(OnCopyTopTenSlowestToClipboardExecute, OnCopyTopTenSlowestToClipboardCanExecute);
-
             LoadFile = new Command<string>(OnLoadFileExecute);
 
-            SelectedLogEvent = AvailableLogEvents.FirstOrDefault();
-
             Document = new TextDocument();
-            Filter = new LogFilter();
+
+            Filter = new LogFilter
+                {
+                    EnableDebug = true,
+                    EnableError = true,
+                    EnableInfo = true,
+                    EnableWarning = true
+                };
+
             Filter.PropertyChanged += OnFilterPropertyChanged;
-            Document.Changing += OnDocumentChanging;
+
+            Document.Changed += DocumentChanged;
 
             _logEntries = new FastObservableCollection<LogEntry>();
 
@@ -146,32 +139,11 @@ namespace Catel.LogAnalyzer.ViewModels
         /// </value>
         public string DroppedFile { get; private set; }
 
-        /// <summary>
-        /// Gets or sets the available trace levels.
-        /// </summary>
-        public FastObservableCollection<LogEvent> AvailableLogEvents
-        {
-            get { return GetValue<FastObservableCollection<LogEvent>>(AvailableTraceLevelsProperty); }
-            set { SetValue(AvailableTraceLevelsProperty, value); }
-        }
-
         public FastObservableCollection<LogEntry> Top10SlowestMethods { get; set; }
 
         public FastObservableCollection<LogEntry> Top10MostCommonLines { get; set; }
 
         public FastObservableCollection<LogEntry> Top10ErrorsAndWarnings { get; set; }
-
-        /// <summary>
-        /// Gets or sets the selected log event.
-        /// </summary>
-        /// <value>
-        /// The selected log event.
-        /// </value>
-        public LogEvent SelectedLogEvent
-        {
-            get { return GetValue<LogEvent>(SelectedLogEventProperty); }
-            set { SetValue(SelectedLogEventProperty, value); }
-        }
 
         /// <summary>
         /// Gets or sets the document.
@@ -194,11 +166,6 @@ namespace Catel.LogAnalyzer.ViewModels
         /// Gets the ParseCommand command.
         /// </summary>
         public Command ParseCommand { get; private set; }
-
-        /// <summary>
-        /// Gets the CopyToClipboard command.
-        /// </summary>
-        public Command CopyTopTenSlowestToClipboard { get; private set; }
 
         /// <summary>
         /// Gets the LoadFile command.
@@ -275,7 +242,7 @@ namespace Catel.LogAnalyzer.ViewModels
         /// <summary>
         /// Called when live view changed.
         /// </summary>
-        private void OnLiveViewChanged()
+        private void OnIsLiveViewEnabledChanged()
         {
             if (IsLiveViewEnabled)
             {
@@ -306,7 +273,7 @@ namespace Catel.LogAnalyzer.ViewModels
         /// </summary>
         private void OnParseCommandExecute()
         {
-            _logEntries = new FastObservableCollection<LogEntry>(_logAnalyzerService.Parse(SelectedLogEvent, Document.Text));
+            _logEntries = new FastObservableCollection<LogEntry>(_logAnalyzerService.Parse(Filter, Document.Text));
 
             var top10SlowestMethods = _logEntries.OrderByDescending(log => log.Time).Take(10);
 
@@ -320,113 +287,27 @@ namespace Catel.LogAnalyzer.ViewModels
 
             Top10ErrorsAndWarnings = new FastObservableCollection<LogEntry>(top10ErrorsAndWarnings);
         }
-
-        /// <summary>
-        /// Method to check whether the CopyToClipboard command can be executed.
-        /// </summary>
-        /// <returns>
-        /// <c>true</c> if the command can be executed; otherwise <c>false</c>.
-        /// </returns>
-        private bool OnCopyTopTenSlowestToClipboardCanExecute()
-        {
-            // if (SelectedTraceEntryCollection == null)
-            // {
-            // return false;
-            // }
-
-            // if (SelectedTraceEntryCollection.Count == 0)
-            // {
-            // return false;
-            // }
-            return true;
-        }
-
-        /// <summary>
-        /// Method to invoke when the CopyToClipboard command is executed.
-        /// </summary>
-        private void OnCopyTopTenSlowestToClipboardExecute()
-        {
-            // var text = LogEntriesToString(SelectedTraceEntryCollection);
-            // if (!string.IsNullOrEmpty(text))
-            // {
-            // Clipboard.SetText(text, TextDataFormat.Text);
-            // }
-        }
         #endregion
 
         #endregion
 
         #region Methods
-        private void OnDocumentChanging(object sender, DocumentChangeEventArgs e)
+        private void DocumentChanged(object sender, DocumentChangeEventArgs e)
         {
-            //TODO
+            if (ParseCommand.CanExecute())
+            {
+                ParseCommand.Execute();
+            }
         }
 
         private void OnFilterPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            // TODO
+            if (ParseCommand.CanExecute())
+            {
+                ParseCommand.Execute();
+            }
         }
 
-        /// <summary>
-        /// Converts a list of trace entries to a string.
-        /// </summary>
-        /// <param name="entries">
-        /// The entries.
-        /// </param>
-        /// <returns>
-        /// STring representing the trace entries.
-        /// </returns>
-        private string LogEntriesToString(IEnumerable<LogEvent> entries)
-        {
-            const string columnText = " | ";
-
-            // int maxTypeLength = AvailableTraceLevels.Max(c => c.ToString("G").Length);
-            var rv = new StringBuilder();
-
-            // var rxMultiline = new Regex(@"(?<=(^|\n)).*", RegexOptions.Multiline | RegexOptions.Compiled);
-
-            // if (entries != null)
-            // {
-            // foreach (var entry in entries)
-            // {
-            // string date = entry.Time.ToString(CultureInfo.CurrentUICulture);
-            // string type = entry.TraceLevel.ToString("G").PadRight(maxTypeLength, ' ');
-            // string datefiller = new String(' ', date.Length);
-            // string typefiller = new String(' ', type.Length);
-
-            // string message = entry.Message;
-            // var matches = rxMultiline.Matches(message);
-
-            // if (matches.Count > 0)
-            // {
-            // rv.AppendFormat("{0}{4}{1}{4}{2}{3}", date, type, matches[0].Value, System.Environment.NewLine, columnText);
-
-            // if (matches.Count > 1)
-            // {
-            // for (int idx = 1, max = matches.Count; idx < max; idx++)
-            // {
-            // rv.AppendFormat("{0}{4}{1}{4}{2}{3}", datefiller, typefiller, matches[idx].Value, System.Environment.NewLine, columnText);
-            // }
-            // }
-            // }
-            // }
-            // }
-            return rv.ToString();
-        }
-
-        /// <summary>
-        /// Determines if the given entry matches the filter log event.
-        /// </summary>
-        /// <param name="logEntry">
-        /// The log entry.
-        /// </param>
-        /// <returns>
-        /// True if matches of if filter is 'Off', false if not.
-        /// </returns>
-        private bool EntryMatches(LogEntry logEntry)
-        {
-            return (logEntry.LogEvent <= SelectedLogEvent);
-        }
         #endregion
     }
 }

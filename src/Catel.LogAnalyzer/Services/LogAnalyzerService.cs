@@ -12,13 +12,14 @@ namespace Catel.LogAnalyzer
     using System.IO;
     using System.Linq;
     using Logging;
+    using Models;
 
     public class LogAnalyzerService : ILogAnalyzerService
     {
         #region ILogAnalyzerService Members
-        public IEnumerable<LogEntry> Parse(LogEvent logEvent, string text)
+        public IEnumerable<LogEntry> Parse(LogFilter logFilter, string text)
         {
-            Argument.IsNotNull(() => logEvent);
+            Argument.IsNotNull(() => logFilter);
             Argument.IsNotNullOrWhitespace(() => text);
 
             var stringReader = new StringReader(text);
@@ -45,9 +46,19 @@ namespace Catel.LogAnalyzer
 
                     var logEntry = new LogEntry {Time = time, LogEvent = logEventValue, Message = message};
 
+                    if ((logEntry.LogEvent != LogEvent.Debug || !logFilter.EnableDebug) && (logEntry.LogEvent != LogEvent.Error || !logFilter.EnableError) && (logEntry.LogEvent != LogEvent.Info || !logFilter.EnableInfo) && (logEntry.LogEvent != LogEvent.Warning || !logFilter.EnableWarning))
+                    {
+                        continue;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(logFilter.Filter) && !logEntry.Message.Contains(logFilter.Filter))
+                    {
+                        continue;
+                    }
+
                     entries.Add(logEntry);
                 }
-                catch (Exception ex)
+                catch (Exception exception)
                 {
                     // TODO: Swallow, or prepend to previous one?
                 }

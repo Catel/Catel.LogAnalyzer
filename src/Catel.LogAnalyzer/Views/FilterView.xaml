@@ -1,7 +1,8 @@
 ﻿<catel:UserControl x:Class="Catel.LogAnalyzer.Views.FilterView"
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-				   xmlns:catel="http://catel.codeplex.com">
+				   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity">
     
     <!-- Resources -->
     <UserControl.Resources>
@@ -11,10 +12,33 @@
     <catel:StackGrid>
 		<catel:StackGrid.RowDefinitions>
 			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
 		</catel:StackGrid.RowDefinitions>
-		
-		<Label Content="{Binding Title}" />
-        <Label Content="[create filter here ]" />
+
+        <catel:StackGrid>
+            <catel:StackGrid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </catel:StackGrid.RowDefinitions>
+            <catel:StackGrid.ColumnDefinitions>
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="Auto" />
+            </catel:StackGrid.ColumnDefinitions>
+            
+            <StackPanel Orientation="Vertical">
+                <Label Content="Type" FontWeight="Bold"/>
+                <CheckBox Content="Debug" IsChecked="{Binding EnableDebug}"/>
+                <CheckBox Content="Info" IsChecked="{Binding EnableInfo}"/>
+                <CheckBox Content="Warning" IsChecked="{Binding EnableWarning}"/>
+                <CheckBox Content="Error" IsChecked="{Binding EnableError}"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical">
+                <Label Content="Search text" FontWeight="Bold"/>
+                <TextBox Text="{Binding Filter}" Width="150">
+                    <i:Interaction.Behaviors>
+                        <catel:UpdateBindingOnTextChanged />
+                    </i:Interaction.Behaviors>
+                </TextBox>
+            </StackPanel>
+        </catel:StackGrid>
     </catel:StackGrid>
 </catel:UserControl>

@@ -3,16 +3,17 @@
 //   Copyright (c) 2008 - 2013 Catel development team. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
 namespace Catel.LogAnalyzer
 {
     using System;
-
-    using Catel.Data;
-    using Catel.Logging;
+    using Data;
+    using Logging;
 
     public class LogEntry : ModelBase
     {
         // Compared to previous log message
+
         #region Properties
         public TimeSpan Duration { get; set; }
 

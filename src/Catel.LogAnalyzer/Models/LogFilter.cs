@@ -3,9 +3,10 @@
 //   Copyright (c) 2008 - 2013 Catel development team. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
 namespace Catel.LogAnalyzer.Models
 {
-    using Catel.Data;
+    using Data;
 
     public class LogFilter : ModelBase
     {

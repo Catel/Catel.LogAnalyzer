@@ -8,12 +8,12 @@ namespace Catel.LogAnalyzer
     using System;
     using System.Collections.Generic;
 
-    using Catel.Logging;
+    using Models;
 
     public interface ILogAnalyzerService
     {
         #region Methods
-        IEnumerable<LogEntry> Parse(LogEvent logEvent, string text);
+        IEnumerable<LogEntry> Parse(LogFilter filter, string text);
 
         IEnumerable<LogEntry> GetSlowestMethods(IEnumerable<LogEntry> entries, int maximumItemsToReturn);
 
