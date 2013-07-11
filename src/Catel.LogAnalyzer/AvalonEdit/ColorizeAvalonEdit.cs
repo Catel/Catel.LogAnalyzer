@@ -38,12 +38,14 @@ namespace Catel.LogAnalyzer.AvalonEdit
             int index;
             var endOffset = _textToHighlight.ToCharArray().Length;
 
-            while ((index = text.IndexOf(_textToHighlight, start, StringComparison.Ordinal)) >= 0)
+            try
             {
-                ChangeLinePart(
-                    lineStartOffset + index,
-                    lineStartOffset + index + endOffset,
-                    element =>
+                while ((index = text.IndexOf(_textToHighlight, start, StringComparison.Ordinal)) >= 0)
+                {
+                    ChangeLinePart(
+                        lineStartOffset + index,
+                        lineStartOffset + index + endOffset,
+                        element =>
                         {
                             var typeface = element.TextRunProperties.Typeface;
 
@@ -54,8 +56,14 @@ namespace Catel.LogAnalyzer.AvalonEdit
                                                                       typeface.Stretch
                                                                       ));
                         });
-                start = index + 1; 
+                    start = index + 1;
+                }
             }
+            catch (Exception)
+            {
+                //Swallow the exception
+            }
+            
         }
         #endregion
     }
