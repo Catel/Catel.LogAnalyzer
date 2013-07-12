@@ -253,6 +253,8 @@ namespace Catel.LogAnalyzer.ViewModels
 
             if (!lines.Any())
             {
+                _messageService.ShowInformation(string.Format("The file '{0}' contains no line.", fileName));
+
                 return;
             }
 

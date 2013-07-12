@@ -74,7 +74,7 @@
                 <Button Content="Parse" Command="{Binding ParseCommand}"
                     Height="25"
                     Width="75" Margin="0,0,0,10" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
-                <CheckBox IsChecked="{Binding IsLiveViewEnabled}" Content="Live View" Margin="0,0,10,10" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+                <CheckBox IsChecked="{Binding IsLiveViewEnabled}" Content="Live View" Margin="0,0,10,10" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontWeight="Bold"/>
             </catel:StackGrid>
         </catel:StackGrid>
 

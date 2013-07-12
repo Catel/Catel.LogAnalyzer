@@ -3,42 +3,40 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 				   xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity">
-    
+
     <!-- Resources -->
     <UserControl.Resources>
     </UserControl.Resources>
 
     <!-- Content -->
     <catel:StackGrid>
-		<catel:StackGrid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-		</catel:StackGrid.RowDefinitions>
+        <catel:StackGrid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </catel:StackGrid.RowDefinitions>
 
-        <catel:StackGrid>
-            <catel:StackGrid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-            </catel:StackGrid.RowDefinitions>
-            <catel:StackGrid.ColumnDefinitions>
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="Auto" />
-            </catel:StackGrid.ColumnDefinitions>
-            
-            <StackPanel Orientation="Vertical">
-                <Label Content="Type" FontWeight="Bold"/>
-                <CheckBox Content="Debug" IsChecked="{Binding EnableDebug}"/>
-                <CheckBox Content="Info" IsChecked="{Binding EnableInfo}"/>
-                <CheckBox Content="Warning" IsChecked="{Binding EnableWarning}"/>
-                <CheckBox Content="Error" IsChecked="{Binding EnableError}"/>
-            </StackPanel>
+        <StackPanel Orientation="Vertical">
+            <Label Content="Search text" FontWeight="Bold" HorizontalAlignment="Left" Width="236" Margin="5,0,-5,0"/>
+            <TextBox x:Name="searchBox" Text="{Binding Filter}"
+        		Width="200"
+        		Margin="10,0,0,0" HorizontalAlignment="Left">
+                <i:Interaction.Behaviors>
+                    <catel:UpdateBindingOnTextChanged />
+                </i:Interaction.Behaviors>
+            </TextBox>
+        </StackPanel>
 
-            <StackPanel Orientation="Vertical">
-                <Label Content="Search text" FontWeight="Bold"/>
-                <TextBox Name="searchBox" Text="{Binding Filter}" Width="150">
-                    <i:Interaction.Behaviors>
-                        <catel:UpdateBindingOnTextChanged />
-                    </i:Interaction.Behaviors>
-                </TextBox>
-            </StackPanel>
-        </catel:StackGrid>
+        <StackPanel Orientation="Horizontal">
+            <StackPanel.Resources>
+                <Style TargetType="{x:Type CheckBox}">
+                    <Setter Property="Margin" Value="10,10,0,0"/>
+                </Style>
+            </StackPanel.Resources>
+            <CheckBox Content="Debug" IsChecked="{Binding EnableDebug}"/>
+            <CheckBox Content="Info" IsChecked="{Binding EnableInfo}"/>
+            <CheckBox Content="Warning" IsChecked="{Binding EnableWarning}"/>
+            <CheckBox Content="Error" IsChecked="{Binding EnableError}"/>
+        </StackPanel>
+
     </catel:StackGrid>
 </catel:UserControl>
