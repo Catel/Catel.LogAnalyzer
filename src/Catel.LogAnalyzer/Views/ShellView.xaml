@@ -18,7 +18,7 @@
             <RowDefinition Height="*" />
         </catel:StackGrid.RowDefinitions>
 
-        <Menu Margin="-4,0,0,0">
+        <Menu Margin="-6">
             <MenuItem Header="File">
                 <MenuItem Header="Open log file" Command="{Binding OpenFileCommand}"/>
                 <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
