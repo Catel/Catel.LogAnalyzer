@@ -13,9 +13,17 @@
     <catel:StackGrid>
         <catel:StackGrid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
         </catel:StackGrid.RowDefinitions>
+        
+        <Menu>
+            <MenuItem Header="File">
+                <MenuItem Header="Open log file" Command="{Binding OpenFileCommand}"/>
+                <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
+            </MenuItem>
+        </Menu>
         
         <views:FilterView DataContext="{Binding Filter}" />
 

@@ -54,7 +54,6 @@
                 <GridViewColumn Header="" Width="27">
                     <GridViewColumn.CellTemplate>
                         <DataTemplate>
-                            <!--<ContentControl Content="{Binding LogEvent}" />-->
                             <ContentControl Content="{Binding LogEvent, Converter={StaticResource OutputTypeConverter}}" />
                         </DataTemplate>
                     </GridViewColumn.CellTemplate>

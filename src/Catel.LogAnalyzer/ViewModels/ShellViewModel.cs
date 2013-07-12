@@ -10,6 +10,7 @@ namespace Catel.LogAnalyzer.ViewModels
     using System.ComponentModel;
     using System.IO;
     using System.Linq;
+    using System.Windows;
     using System.Xml;
     using Collections;
     using Data;
@@ -48,6 +49,9 @@ namespace Catel.LogAnalyzer.ViewModels
         private readonly IDispatcherService _dispatcherService;
         private readonly IFileWatcherService _fileWatcherService;
         private readonly ILogAnalyzerService _logAnalyzerService;
+        private readonly IMessageService _messageService;
+        private readonly IOpenFileService _openFileService;
+        private readonly IPleaseWaitService _pleaseWaitService;
 
         /// <summary>
         /// The trace entries with all trace items.
@@ -59,15 +63,22 @@ namespace Catel.LogAnalyzer.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="ShellViewModel"/> class.
         /// </summary>
-        public ShellViewModel(ILogAnalyzerService logAnalyzerService, IFileWatcherService fileWatcherService, IDispatcherService dispatcherService)
+        public ShellViewModel(ILogAnalyzerService logAnalyzerService, IFileWatcherService fileWatcherService, IDispatcherService dispatcherService, IOpenFileService openFileService, IPleaseWaitService pleaseWaitService, IMessageService messageService)
         {
             _logAnalyzerService = logAnalyzerService;
             _fileWatcherService = fileWatcherService;
             _dispatcherService = dispatcherService;
+            _openFileService = openFileService;
+            _pleaseWaitService = pleaseWaitService;
+            _messageService = messageService;
 
             ParseCommand = new Command(OnParseCommandExecute, OnParseCommandCanExecute);
 
             LoadFile = new Command<string>(OnLoadFileExecute);
+
+            OpenFileCommand = new Command(OnOpenFileCommandExecute);
+
+            ExitCommand = new Command(OnExitCommandExecute);
 
             Document = new TextDocument();
 
@@ -181,7 +192,7 @@ namespace Catel.LogAnalyzer.ViewModels
 
         #region Properties
         /// <summary>
-        /// Gets the ParseCommand command.
+        /// Gets the Parse command.
         /// </summary>
         public Command ParseCommand { get; private set; }
 
@@ -189,9 +200,42 @@ namespace Catel.LogAnalyzer.ViewModels
         /// Gets the LoadFile command.
         /// </summary>
         public Command<string> LoadFile { get; private set; }
+
+        /// <summary>
+        /// Gets the OpenFileCommand command.
+        /// </summary>
+        public Command OpenFileCommand { get; private set; }
+
+        /// <summary>
+        /// Gets the ExitCommand command.
+        /// </summary>
+        public Command ExitCommand { get; private set; }
         #endregion
 
         #region Methods
+        /// <summary>
+        /// Method to invoke when the ExitCommand command is executed.
+        /// </summary>
+        private void OnExitCommandExecute()
+        {
+            Application.Current.Shutdown();
+        }
+
+        /// <summary>
+        /// Method to invoke when the OpenFileCommand command is executed.
+        /// </summary>
+        private void OnOpenFileCommandExecute()
+        {
+            _openFileService.DetermineFile();
+
+            var fileName = _openFileService.FileName;
+
+            if (FileHelper.Exists(fileName))
+            {
+                OnLoadFileExecute(fileName);
+            }
+        }
+
         /// <summary>
         /// Method to invoke when the LoadFile command is executed.
         /// </summary>
@@ -205,8 +249,17 @@ namespace Catel.LogAnalyzer.ViewModels
             var fileLines = FileHelper.ReadAllLines(DroppedFile)
                                       .Where(line => !string.IsNullOrWhiteSpace(line));
 
-            var textToAdd = fileLines.Aggregate((line1, line2) => string.Format("{0}\n{1}", line1, line2))
-                                     .Trim();
+            var lines = fileLines as string[] ?? fileLines.ToArray();
+
+            if (!lines.Any())
+            {
+                return;
+            }
+
+            _pleaseWaitService.Show("Adding logs, please be patient...");
+
+            var textToAdd = lines.Aggregate((line1, line2) => string.Format("{0}\n{1}", line1, line2))
+                                 .Trim();
 
             if (Document == null)
             {
@@ -226,6 +279,8 @@ namespace Catel.LogAnalyzer.ViewModels
             {
                 SubscribeToFileChanges();
             }
+
+            _pleaseWaitService.Hide();
         }
 
         /// <summary>

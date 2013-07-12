@@ -35,11 +35,11 @@ namespace Catel.LogAnalyzer.AvalonEdit
             var lineStartOffset = line.Offset;
             var text = CurrentContext.Document.GetText(line);
             var start = 0;
-            int index;
             var endOffset = _textToHighlight.ToCharArray().Length;
 
             try
             {
+                int index;
                 while ((index = text.IndexOf(_textToHighlight, start, StringComparison.Ordinal)) >= 0)
                 {
                     ChangeLinePart(
