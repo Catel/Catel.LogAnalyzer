@@ -32,7 +32,7 @@ namespace Catel.LogAnalyzer.ViewModels
         /// <summary>
         /// Register the IsLiveViewEnabled property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData IsLiveViewEnabledProperty = RegisterProperty("IsLiveViewEnabled", typeof (bool), null, (sender, args) =>
+        public static readonly PropertyData IsLiveViewEnabledProperty = RegisterProperty("IsLiveViewEnabled", typeof(bool), null, (sender, args) =>
             {
                 var viewModel = sender as ShellViewModel;
 
@@ -63,7 +63,8 @@ namespace Catel.LogAnalyzer.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="ShellViewModel"/> class.
         /// </summary>
-        public ShellViewModel(ILogAnalyzerService logAnalyzerService, IFileWatcherService fileWatcherService, IDispatcherService dispatcherService, IOpenFileService openFileService, IPleaseWaitService pleaseWaitService, IMessageService messageService)
+        public ShellViewModel(ILogAnalyzerService logAnalyzerService, IFileWatcherService fileWatcherService, IDispatcherService dispatcherService, 
+            IOpenFileService openFileService, IPleaseWaitService pleaseWaitService, IMessageService messageService)
         {
             _logAnalyzerService = logAnalyzerService;
             _fileWatcherService = fileWatcherService;
@@ -101,7 +102,7 @@ namespace Catel.LogAnalyzer.ViewModels
                 HighlightingDefinition = HighlightingLoader.Load(reader, HighlightingManager.Instance);
             }
 
-            HighlightingManager.Instance.RegisterHighlighting("CatelHighlighting", new[] {".cool"}, HighlightingDefinition);
+            HighlightingManager.Instance.RegisterHighlighting("CatelHighlighting", new[] { ".cool" }, HighlightingDefinition);
         }
         #endregion
 
@@ -263,7 +264,7 @@ namespace Catel.LogAnalyzer.ViewModels
                 return;
             }
 
-            _pleaseWaitService.Show("Adding logs, please be patient...");
+            _pleaseWaitService.Push();
 
             var textToAdd = lines.Aggregate((line1, line2) => string.Format("{0}\n{1}", line1, line2))
                                  .Trim();
@@ -287,7 +288,7 @@ namespace Catel.LogAnalyzer.ViewModels
                 SubscribeToFileChanges();
             }
 
-            _pleaseWaitService.Hide();
+            _pleaseWaitService.Pop();
         }
 
         /// <summary>
@@ -353,19 +354,22 @@ namespace Catel.LogAnalyzer.ViewModels
         /// </summary>
         private void OnParseCommandExecute()
         {
+            _pleaseWaitService.Push();
+
             _logEntries = new FastObservableCollection<LogEntry>(_logAnalyzerService.Parse(Filter, Document.Text));
 
-            var top10SlowestMethods = _logEntries.OrderByDescending(log => log.Time).Take(10);
+            _dispatcherService.BeginInvoke(() =>
+            {
+                    var top10SlowestMethods = _logEntries.OrderByDescending(log => log.Time).Take(10);
+                    var top10MostCommonLines = _logAnalyzerService.Filter(_logEntries, 10, log => log.LogEvent != LogEvent.Error && log.LogEvent != LogEvent.Warning, null, key => key.Time);
+                    var top10ErrorsAndWarnings = _logAnalyzerService.Filter(_logEntries, 10, log => log.LogEvent == LogEvent.Error || log.LogEvent == LogEvent.Warning, null, key => key.Time);
 
-            Top10SlowestMethods = new FastObservableCollection<LogEntry>(top10SlowestMethods);
+                    _pleaseWaitService.Pop();
 
-            var top10MostCommonLines = _logAnalyzerService.Filter(_logEntries, 10, log => log.LogEvent != LogEvent.Error && log.LogEvent != LogEvent.Warning, null, key => key.Time);
-
-            Top10MostCommonLines = new FastObservableCollection<LogEntry>(top10MostCommonLines);
-
-            var top10ErrorsAndWarnings = _logAnalyzerService.Filter(_logEntries, 10, log => log.LogEvent == LogEvent.Error || log.LogEvent == LogEvent.Warning, null, key => key.Time);
-
-            Top10ErrorsAndWarnings = new FastObservableCollection<LogEntry>(top10ErrorsAndWarnings);
+                    Top10SlowestMethods = new FastObservableCollection<LogEntry>(top10SlowestMethods);
+                    Top10MostCommonLines = new FastObservableCollection<LogEntry>(top10MostCommonLines);
+                    Top10ErrorsAndWarnings = new FastObservableCollection<LogEntry>(top10ErrorsAndWarnings);
+            });
         }
         #endregion
 
@@ -374,18 +378,12 @@ namespace Catel.LogAnalyzer.ViewModels
         #region Methods
         private void DocumentChanged(object sender, DocumentChangeEventArgs e)
         {
-            if (ParseCommand.CanExecute())
-            {
-                ParseCommand.Execute();
-            }
+            ParseCommand.Execute();
         }
 
         private void OnFilterPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (ParseCommand.CanExecute())
-            {
-                ParseCommand.Execute();
-            }
+            ParseCommand.Execute();
         }
         #endregion
     }

@@ -5,17 +5,22 @@
                   xmlns:avalonEdit="clr-namespace:ICSharpCode.AvalonEdit;assembly=ICSharpCode.AvalonEdit"
                   xmlns:views="clr-namespace:Catel.LogAnalyzer.Views"
                   xmlns:behaviors="clr-namespace:Catel.LogAnalyzer.Behaviors"
+                  xmlns:controls="clr-namespace:Catel.LogAnalyzer.Controls"
                   Icon="/Resources/Images/logo.png"
                   ShowInTaskbar="True" ResizeMode="CanResize" SizeToContent="Manual"                   
                   WindowStartupLocation="CenterScreen" WindowState="Maximized">
 
-    <!-- Content -->
+    <catel:DataWindow.Resources>
+        <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />
+    </catel:DataWindow.Resources>
+    
     <catel:StackGrid>
         <catel:StackGrid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </catel:StackGrid.RowDefinitions>
 
         <Menu Margin="-6">
@@ -38,8 +43,7 @@
                    HorizontalAlignment="Left" 
                    FontWeight="Bold"/>
 
-            <avalonEdit:TextEditor 
-                Name="textEditor"
+            <avalonEdit:TextEditor Name="textEditor"
             FontFamily="Consolas"
             FontSize="10pt"
             SyntaxHighlighting="{Binding HighlightingDefinition}"
@@ -89,5 +93,11 @@
                 <views:ResultsView DataContext="{Binding Top10ErrorsAndWarnings}" />
             </TabItem>
         </TabControl>
+        
+        <StatusBar>
+            <Viewbox Width="16" Height="16">
+                <controls:CircularProgressBar Visibility="{Binding RelativeSource={RelativeSource AncestorType=views:ShellView}, Path=ShowBusyIndicator, Converter={StaticResource BooleanToHidingVisibilityConverter}}" />
+            </Viewbox>
+        </StatusBar>
     </catel:StackGrid>
 </catel:DataWindow>

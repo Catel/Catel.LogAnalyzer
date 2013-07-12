@@ -6,6 +6,10 @@
 
 namespace Catel.LogAnalyzer.Views
 {
+    using System.Windows;
+
+    using Catel.MVVM.Services;
+
     using IoC;
     using Windows;
 
@@ -23,8 +27,22 @@ namespace Catel.LogAnalyzer.Views
         {
             InitializeComponent();
 
-            ServiceLocator.Default.RegisterInstance(textEditor.TextArea.TextView.LineTransformers);
+            var serviceLocator = ServiceLocator.Default;
+
+            serviceLocator.RegisterInstance(this);
+            serviceLocator.RegisterType<IPleaseWaitService, LogAnalyzer.Services.PleaseWaitService>();
+            serviceLocator.RegisterInstance(textEditor.TextArea.TextView.LineTransformers);
         }
+        #endregion
+
+        #region Properties
+        public bool ShowBusyIndicator
+        {
+            get { return (bool)GetValue(ShowBusyIndicatorProperty); }
+            set { SetValue(ShowBusyIndicatorProperty, value); }
+        }
+
+        public static readonly DependencyProperty ShowBusyIndicatorProperty = DependencyProperty.Register("ShowBusyIndicator", typeof(bool), typeof(ShellView), new PropertyMetadata(false));
         #endregion
     }
 }

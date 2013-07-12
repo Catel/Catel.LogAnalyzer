@@ -17,11 +17,9 @@
 
         <StackPanel Orientation="Vertical">
             <Label Content="Search text" FontWeight="Bold" HorizontalAlignment="Left" Width="236" Margin="5,0,-5,0"/>
-            <TextBox x:Name="searchBox" Text="{Binding Filter}"
-        		Width="200"
-        		Margin="10,0,0,0" HorizontalAlignment="Left">
+            <TextBox x:Name="searchBox" Text="{Binding Filter}" Width="200" Margin="10,0,0,0" HorizontalAlignment="Left">
                 <i:Interaction.Behaviors>
-                    <catel:UpdateBindingOnTextChanged />
+                    <catel:UpdateBindingOnTextChanged UpdateDelay="500" />
                 </i:Interaction.Behaviors>
             </TextBox>
         </StackPanel>
@@ -32,6 +30,7 @@
                     <Setter Property="Margin" Value="10,10,0,0"/>
                 </Style>
             </StackPanel.Resources>
+            
             <CheckBox Content="Debug" IsChecked="{Binding EnableDebug}"/>
             <CheckBox Content="Info" IsChecked="{Binding EnableInfo}"/>
             <CheckBox Content="Warning" IsChecked="{Binding EnableWarning}"/>

@@ -140,11 +140,15 @@
     </Compile>
     <Compile Include="AvalonEdit\ColorizeAvalonEdit.cs" />
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Controls\CircularProgressBar.xaml.cs">
+      <DependentUpon>CircularProgressBar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converters\OutputTypeConverter.cs" />
     <Compile Include="Behaviors\DropFileBehavior.cs" />
     <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="Services\FileWatcherService.cs" />
     <Compile Include="Services\Interfaces\IFileWatcherService.cs" />
+    <Compile Include="Services\PleaseWaitService.cs" />
     <Compile Include="ViewModels\FilterViewModel.cs" />
     <Compile Include="ViewModels\ResultsViewModel.cs" />
     <Compile Include="Views\FilterView.xaml.cs">
@@ -156,6 +160,10 @@
     <Compile Include="Views\SplashScreen.xaml.cs">
       <DependentUpon>SplashScreen.xaml</DependentUpon>
     </Compile>
+    <Page Include="Controls\CircularProgressBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\FilterView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
