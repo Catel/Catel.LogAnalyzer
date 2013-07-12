@@ -51,7 +51,7 @@ namespace Catel.LogAnalyzer
                         continue;
                     }
 
-                    if (!string.IsNullOrWhiteSpace(logFilter.Filter) && !logEntry.Message.Contains(logFilter.Filter))
+                    if (!string.IsNullOrWhiteSpace(logFilter.Filter) && !logEntry.Message.ToLower().Contains(logFilter.Filter.ToLower()))
                     {
                         continue;
                     }

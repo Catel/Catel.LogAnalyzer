@@ -227,19 +227,14 @@ namespace Catel.LogAnalyzer.ViewModels
         /// </summary>
         private void OnOpenFileCommandExecute()
         {
-            var result = _openFileService.DetermineFile();
-
-            if (!result)
+            if (!_openFileService.DetermineFile())
             {
                 return;
             }
 
             var fileName = _openFileService.FileName;
 
-            if (FileHelper.Exists(fileName))
-            {
-                OnLoadFileExecute(fileName);
-            }
+            OnLoadFileExecute(fileName);
         }
 
         /// <summary>
