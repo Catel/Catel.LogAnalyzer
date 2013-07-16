@@ -4,13 +4,12 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+
 namespace Catel.LogAnalyzer.Views
 {
     using System.Windows;
-
-    using Catel.MVVM.Services;
-
     using IoC;
+    using MVVM.Services;
     using Windows;
 
     /// <summary>
@@ -18,6 +17,10 @@ namespace Catel.LogAnalyzer.Views
     /// </summary>
     public partial class ShellView
     {
+        #region Constants
+        public static readonly DependencyProperty ShowBusyIndicatorProperty = DependencyProperty.Register("ShowBusyIndicator", typeof (bool), typeof (ShellView), new PropertyMetadata(false));
+        #endregion
+
         #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="ShellView"/> class.
@@ -30,7 +33,7 @@ namespace Catel.LogAnalyzer.Views
             var serviceLocator = ServiceLocator.Default;
 
             serviceLocator.RegisterInstance(this);
-            serviceLocator.RegisterType<IPleaseWaitService, LogAnalyzer.Services.PleaseWaitService>();
+            serviceLocator.RegisterType<IPleaseWaitService, Services.PleaseWaitService>();
             serviceLocator.RegisterInstance(textEditor.TextArea.TextView.LineTransformers);
         }
         #endregion
@@ -38,11 +41,9 @@ namespace Catel.LogAnalyzer.Views
         #region Properties
         public bool ShowBusyIndicator
         {
-            get { return (bool)GetValue(ShowBusyIndicatorProperty); }
+            get { return (bool) GetValue(ShowBusyIndicatorProperty); }
             set { SetValue(ShowBusyIndicatorProperty, value); }
         }
-
-        public static readonly DependencyProperty ShowBusyIndicatorProperty = DependencyProperty.Register("ShowBusyIndicator", typeof(bool), typeof(ShellView), new PropertyMetadata(false));
         #endregion
     }
 }

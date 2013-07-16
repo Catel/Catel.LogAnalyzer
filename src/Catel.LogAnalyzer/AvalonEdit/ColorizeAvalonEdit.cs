@@ -30,11 +30,23 @@ namespace Catel.LogAnalyzer.AvalonEdit
         #endregion
 
         #region Methods
-        protected override void ColorizeLine(DocumentLine line)
+        /// <summary>
+        /// Override this method to colorize an individual document line.
+        /// </summary>
+        /// <param name="documentLine">The document line.</param>
+        protected override void ColorizeLine(DocumentLine documentLine)
         {
-            var lineStartOffset = line.Offset;
-            var text = CurrentContext.Document.GetText(line);
+            Argument.IsNotNull(() => documentLine);
+
+            var lineStartOffset = documentLine.Offset;
+            var text = CurrentContext.Document.GetText(documentLine);
             var start = 0;
+
+            if (_textToHighlight == null)
+            {
+                return;
+            }
+
             var endOffset = _textToHighlight.ToCharArray().Length;
 
             try
@@ -46,16 +58,16 @@ namespace Catel.LogAnalyzer.AvalonEdit
                         lineStartOffset + index,
                         lineStartOffset + index + endOffset,
                         element =>
-                        {
-                            var typeface = element.TextRunProperties.Typeface;
+                            {
+                                var typeface = element.TextRunProperties.Typeface;
 
-                            element.TextRunProperties.SetTypeface(new Typeface(
-                                                                      typeface.FontFamily,
-                                                                      FontStyles.Normal,
-                                                                      FontWeights.UltraBold,
-                                                                      typeface.Stretch
-                                                                      ));
-                        });
+                                element.TextRunProperties.SetTypeface(new Typeface(
+                                                                          typeface.FontFamily,
+                                                                          FontStyles.Normal,
+                                                                          FontWeights.UltraBold,
+                                                                          typeface.Stretch
+                                                                          ));
+                            });
                     start = index + 1;
                 }
             }
@@ -63,7 +75,6 @@ namespace Catel.LogAnalyzer.AvalonEdit
             {
                 //Swallow the exception
             }
-            
         }
         #endregion
     }
