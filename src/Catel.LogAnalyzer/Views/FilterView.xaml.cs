@@ -4,6 +4,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+
 namespace Catel.LogAnalyzer.Views
 {
     using System;
@@ -34,10 +35,9 @@ namespace Catel.LogAnalyzer.Views
 
                               var colorizeAvalonEdit = new ColorizeAvalonEdit(searchBox.Text);
 
-                              if (!lineTransformers.Contains(colorizeAvalonEdit))
-                              {
-                                  lineTransformers.Add(colorizeAvalonEdit);
-                              }
+                              lineTransformers.Clear();
+
+                              lineTransformers.Add(colorizeAvalonEdit);
                           });
         }
         #endregion

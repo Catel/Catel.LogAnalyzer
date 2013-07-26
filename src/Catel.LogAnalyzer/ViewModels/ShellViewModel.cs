@@ -373,12 +373,18 @@ namespace Catel.LogAnalyzer.ViewModels
         #region Methods
         private void DocumentChanged(object sender, DocumentChangeEventArgs e)
         {
-            ParseCommand.Execute();
+            if (ParseCommand.CanExecute())
+            {
+                ParseCommand.Execute();
+            }
         }
 
         private void OnFilterPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            ParseCommand.Execute();
+            if (ParseCommand.CanExecute())
+            {
+                ParseCommand.Execute();
+            }
         }
         #endregion
     }
